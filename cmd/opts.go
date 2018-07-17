@@ -435,7 +435,7 @@ type DeployOpts struct {
 	NoRedact bool `long:"no-redact" description:"Show non-redacted manifest diff"`
 
 	Recreate  bool                `long:"recreate"                          description:"Recreate all VMs in deployment"`
-	Fix       bool                `long:"fix"                               description:"Recreate unresponsive instances"`
+	Fix       bool                `long:"fix"                               description:"Don't fail on unresponsive instances, but recreate them."`
 	SkipDrain []boshdir.SkipDrain `long:"skip-drain" value-name:"INSTANCE-GROUP"  description:"Skip running drain scripts for specific instance groups" optional:"true" optional-value:"*"`
 
 	Canaries    string `long:"canaries" description:"Override manifest values for canaries"`
@@ -806,7 +806,7 @@ type RecreateOpts struct {
 
 	SkipDrain bool `long:"skip-drain" description:"Skip running drain scripts"`
 	Force     bool `long:"force"      description:"No-op for backwards compatibility"`
-	Fix       bool `long:"fix"        description:"Fix unresponsive VMs"`
+	Fix       bool `long:"fix"        description:"Don't fail on unresponsive instances"`
 
 	Canaries    string `long:"canaries" description:"Override manifest values for canaries"`
 	MaxInFlight string `long:"max-in-flight" description:"Override manifest values for max_in_flight"`
