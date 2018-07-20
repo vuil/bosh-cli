@@ -3,7 +3,10 @@ package uaa
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
+	"os"
+	"strconv"
 
 	"time"
 
@@ -51,7 +54,13 @@ func (f Factory) httpClient(config Config) (Client, error) {
 		f.logger.Debug(f.logTag, "Using custom root CAs")
 	}
 
-	rawClient := httpclient.CreateDefaultClient(certPool)
+	var rawClient *http.Client
+	isSkipVerify, _ := strconv.ParseBool(os.Getenv("BOSH_SKIP_VERIFY"))
+	if isSkipVerify {
+		rawClient = httpclient.CreateDefaultClientInsecureSkipVerify()
+	} else {
+		rawClient = httpclient.CreateDefaultClient(certPool)
+	}
 	retryClient := httpclient.NewNetworkSafeRetryClient(rawClient, 5, 500*time.Millisecond, f.logger)
 
 	httpClient := httpclient.NewHTTPClient(retryClient, f.logger)

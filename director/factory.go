@@ -5,6 +5,8 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
+	"strconv"
 
 	"time"
 
@@ -52,7 +54,14 @@ func (f Factory) httpClient(config FactoryConfig, taskReporter TaskReporter, fil
 		f.logger.Debug(f.logTag, "Using custom root CAs")
 	}
 
-	rawClient := httpclient.CreateDefaultClient(certPool)
+	var rawClient *http.Client
+	isSkipVerify, _ := strconv.ParseBool(os.Getenv("BOSH_SKIP_VERIFY"))
+	if isSkipVerify {
+		rawClient = httpclient.CreateDefaultClientInsecureSkipVerify()
+	} else {
+		rawClient = httpclient.CreateDefaultClient(certPool)
+	}
+
 	authAdjustment := NewAuthRequestAdjustment(
 		config.TokenFunc, config.Client, config.ClientSecret)
 	rawClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
